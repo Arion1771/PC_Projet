@@ -20,6 +20,10 @@ public class ProdConsBuffer implements IProdConsBuffer{
     public ProdConsBuffer(int bufs) {
         Bufs = bufs;
         buffer = new Message[Bufs];
+        nempty = Bufs;
+        nfull = 0;
+        np = 0;
+        nc = 0;
     }
 
     @Override
