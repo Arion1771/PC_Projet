@@ -8,7 +8,6 @@ import prodcons.TestProdCons;
 
 public class ProdConsBuffer implements IProdConsBuffer{
 
-
     private int Bufs;
     private Message[] buffer;
     private int np;
@@ -16,13 +15,12 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private int nmsg;
     private int nempty;
     private int nfull;
+    private int activeProducers = 0;
 
     public ProdConsBuffer(int bufs) {
         Bufs = bufs;
         buffer = new Message[Bufs];
     }
-
-    
 
     @Override
     public int nmsg() {
@@ -48,8 +46,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
          notifyAll();
     }
 
-
-
     @Override
     public synchronized prodcons.Message get() throws InterruptedException {
         while(nempty == Bufs){
@@ -63,5 +59,20 @@ public class ProdConsBuffer implements IProdConsBuffer{
         return m;
     }
 
+    public synchronized void nbProducer(int nb) {
+        this.activeProducers = nb;
+    }
 
+    public synchronized void unregisterProducer() {
+        activeProducers--;
+        notifyAll();
+    }
+
+    public synchronized boolean NoMoreProducers() {
+        return activeProducers <= 0;
+    }
+
+    public synchronized boolean isEmpty() {
+        return nfull == 0;
+    }
 }

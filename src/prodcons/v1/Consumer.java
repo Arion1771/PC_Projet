@@ -25,7 +25,10 @@ public class Consumer extends Thread {
                 System.out.println("Thread " + this.getId() + " was interrupted while sleeping\n");
             }
             System.out.println("Thread " + this.getId() + " received message: " + msg);
+            if (this.buff.NoMoreProducers() && this.buff.isEmpty()) {
+                break;
+            }
+            System.out.println(this.buff.NoMoreProducers() && this.buff.isEmpty());
         }
     }
-
 }
