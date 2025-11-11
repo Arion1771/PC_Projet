@@ -28,7 +28,7 @@ public class TestProdCons {
         int minProd = Integer.parseInt(properties.getProperty("minProd"));
         int maxProd = Integer.parseInt(properties.getProperty("maxProd"));
 
-        ProdConsBuffer buffer = new ProdConsBuffer();
+        ProdConsBuffer buffer = new ProdConsBuffer(bufSz);
 
         while (nCons >0) {
             Consumer c = new Consumer(buffer,consTime);

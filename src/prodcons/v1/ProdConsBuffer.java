@@ -17,18 +17,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private int nempty;
     private int nfull;
 
-    public ProdConsBuffer() {
-        Properties properties = new Properties();
-    try {
-        properties.loadFromXML(
-        TestProdCons.class.getClassLoader().getResourceAsStream("options.xml"));
-    } catch (IOException e) {
-        System.err.println("Error loading options.xml");
-        e.printStackTrace();
-    }
-    Bufs = Integer.parseInt(properties.getProperty("Bufsz"));
-    buffer = new Message[Bufs];
-    
+    public ProdConsBuffer(int bufs) {
+        Bufs = bufs;
+        buffer = new Message[Bufs];
     }
 
     

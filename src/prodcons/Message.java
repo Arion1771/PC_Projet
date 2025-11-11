@@ -16,9 +16,3 @@ public class Message {
         return "ID :" + ID + " Content :" + content;
     }
 }
-
-    @Override
-    public String toString() {
-        return content;
-    }
-}

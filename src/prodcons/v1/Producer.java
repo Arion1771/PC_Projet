@@ -12,13 +12,15 @@ public class Producer extends Thread {
         this.buff=b;
         this.prodTime=time;
         this.nbMess=nbmess;
-        this.mess=new Message("Message from thread "+this.getId());
+        this.mess=new Message(getName(), 0);
     }
 
     @Override
     public void run() {
-        while (nbMess>0) {
+        int i=0;
+        while (i<nbMess) {
             try {
+                this.mess=new Message("Message from Thread "+this.getId(), i);
                 this.buff.put(mess);
             } catch (InterruptedException e) {
                 System.out.println("Thread "+this.getId()+" was interrupted\n");
@@ -29,7 +31,7 @@ public class Producer extends Thread {
                 System.out.println("Thread "+this.getId()+" was interrupted while sleeping\n");
             }
             System.out.println("Thread "+this.getId()+" sent message: "+mess);
-            nbMess--;
+            i++;
         }
         
     }
