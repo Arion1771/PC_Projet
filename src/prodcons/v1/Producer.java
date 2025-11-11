@@ -12,6 +12,7 @@ public class Producer extends Thread {
         this.buff=b;
         this.prodTime=time;
         this.nbMess=nbmess;
+        this.mess=new Message("Message from thread "+this.getId());
     }
 
     @Override

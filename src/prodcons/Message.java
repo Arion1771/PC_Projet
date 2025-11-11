@@ -1,4 +1,5 @@
 package prodcons;
+
 public class Message {
     private String content;
     private int ID;
@@ -13,5 +14,11 @@ public class Message {
     }
     public String toString() {
         return "ID :" + ID + " Content :" + content;
+    }
+}
+
+    @Override
+    public String toString() {
+        return content;
     }
 }

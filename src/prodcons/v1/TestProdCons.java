@@ -11,9 +11,11 @@ public class TestProdCons {
     public static void main(String[] args) {
         Random rand = new Random();
         Properties properties = new Properties();
+        System.out.println("Chemin trouvé : " + 
+        TestProdCons.class.getClassLoader().getResource("prodcons/v1/options.xml"));
         try {
             properties.loadFromXML(
-            TestProdCons.class.getClassLoader().getResourceAsStream("options.xml"));
+            TestProdCons.class.getClassLoader().getResourceAsStream("prodcons/v1/options.xml"));
         } catch (IOException e) {
             System.err.println("Error loading options.xml");
             e.printStackTrace();
@@ -32,6 +34,13 @@ public class TestProdCons {
             Consumer c = new Consumer(buffer,consTime);
             c.start();
             nCons--;
+        }
+
+        while (nProd >0) {
+            int nMsg = rand.nextInt((maxProd - minProd) + 1) + minProd;
+            Producer p = new Producer(buffer,prodTime,nMsg);
+            p.start();
+            nProd--;
         }
     }
 
