@@ -9,42 +9,67 @@ import prodcons.TestProdCons;
 public class ProdConsBuffer implements IProdConsBuffer{
 
 
+    private int Bufs;
+    private Message[] buffer;
+    private int np;
+    private int nc;
+    private int nmsg;
+    private int nempty;
+    private int nfull;
+
     public ProdConsBuffer() {
         Properties properties = new Properties();
     try {
         properties.loadFromXML(
         TestProdCons.class.getClassLoader().getResourceAsStream("options.xml"));
     } catch (IOException e) {
-        // TODO Auto-generated catch block
         System.err.println("Error loading options.xml");
         e.printStackTrace();
     }
-    int nProd = Integer.parseInt(properties.getProperty("nProd"));
-    int nCons = Integer.parseInt(properties.getProperty("nCons"));
+    Bufs = Integer.parseInt(properties.getProperty("Bufsz"));
+    buffer = new Message[Bufs];
+    
     }
 
-    @Override
-    public void put(Message m) throws InterruptedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'put'");
-    }
-
-    @Override
-    public Message get() throws InterruptedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
-    }
+    
 
     @Override
     public int nmsg() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'nmsg'");
+        return nfull;
     }
 
     @Override
     public int totmsg() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'totmsg'");
+        return nmsg;
+        
+    }
+
+    @Override
+    public synchronized void put(prodcons.Message m) throws InterruptedException {
+       while(nfull == Bufs){
+        wait();
+       }
+         buffer[np%Bufs] = m;
+         np++;
+         nmsg++;
+         nempty--;
+         nfull++;
+         notifyAll();
+    }
+
+
+
+    @Override
+    public synchronized prodcons.Message get() throws InterruptedException {
+        while(nempty == Bufs){
+            wait();
+        }
+        Message m = buffer[nc%Bufs];
+        nc++;
+        nempty++;
+        nfull--;
+        notifyAll();
+        return m;
     }
 
 
