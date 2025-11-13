@@ -1,4 +1,4 @@
-package prodcons.v1;
+package prodcons.v2;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -15,6 +15,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private int nmsg;
     private int nempty;
     private int nfull;
+    private int activeProducers = 0;
 
     public ProdConsBuffer(int bufs) {
         Bufs = bufs;
@@ -60,5 +61,20 @@ public class ProdConsBuffer implements IProdConsBuffer{
         nfull--;
         notifyAll();
         return m;
+    }
+
+    public synchronized void RegisterProducer( int nbProducers ) {
+        activeProducers += nbProducers;
+    }
+
+    public synchronized void UnregisterProducer() {
+        activeProducers--;
+        if (activeProducers == 0) {
+            notifyAll();
+        }
+    }
+
+    public synchronized boolean NoMoreProducers() {
+        return activeProducers <= 0;
     }
 }
