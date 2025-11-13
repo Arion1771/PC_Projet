@@ -14,7 +14,7 @@ public class Consumer extends Thread {
     @Override
     public void run() {
         while (true) {
-            if (buff.NoMoreProducers() && buff.nmsg() == 0) {
+            if (buff.NoMoreProducers() && buff.nmsg() <= 0) {
                 break;
             }
             try {

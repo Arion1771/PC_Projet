@@ -34,7 +34,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
     @Override
     public int totmsg() {
         return nmsg;
-        
     }
 
     @Override
@@ -54,6 +53,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
     public synchronized prodcons.Message get() throws InterruptedException {
         while(nempty == Bufs){
             wait();
+            if (NoMoreProducers() && nmsg() <= 0) {
+                break;
+            }
         }
         Message m = buffer[nc%Bufs];
         nc++;
