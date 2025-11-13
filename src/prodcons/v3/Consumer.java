@@ -17,11 +17,7 @@ public class Consumer extends Thread {
             if (buff.NoMoreProducers() && buff.nmsg() <= 0) {
                 break;
             }
-            try {
-                msg = this.buff.get();
-            } catch (InterruptedException e) {
-                System.out.println("Thread " + this.getId() + " was interrupted\n");
-            }
+            msg = this.buff.get();
             try {
                 sleep(consTime);
             } catch (InterruptedException e) {

@@ -37,7 +37,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized void put(prodcons.Message m) throws InterruptedException {
+    public void put(prodcons.Message m) throws InterruptedException {
        while(nfull == Bufs){
         wait();
        }
@@ -50,7 +50,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized prodcons.Message get() throws InterruptedException {
+    public prodcons.Message get() throws InterruptedException {
         while(nempty == Bufs){
             wait();
             if (NoMoreProducers() && nmsg() <= 0) {
@@ -65,11 +65,11 @@ public class ProdConsBuffer implements IProdConsBuffer{
         return m;
     }
 
-    public synchronized void RegisterProducer( int nbProducers ) {
+    public void RegisterProducer( int nbProducers ) {
         activeProducers += nbProducers;
     }
 
-    public synchronized void UnregisterProducer() {
+    public void UnregisterProducer() {
         activeProducers--;
         if (activeProducers == 0) {
             notifyAll();
