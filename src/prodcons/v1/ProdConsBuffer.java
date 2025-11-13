@@ -62,21 +62,4 @@ public class ProdConsBuffer implements IProdConsBuffer{
         notifyAll();
         return m;
     }
-
-    public synchronized void nbProducer(int nb) {
-        this.activeProducers = nb;
-    }
-
-    public synchronized void unregisterProducer() {
-        activeProducers--;
-        notifyAll();
-    }
-
-    public synchronized boolean NoMoreProducers() {
-        return activeProducers <= 0;
-    }
-
-    public synchronized boolean isEmpty() {
-        return nfull == 0;
-    }
 }
