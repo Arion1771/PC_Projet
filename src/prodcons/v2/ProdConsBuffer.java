@@ -1,10 +1,8 @@
 package prodcons.v2;
 
-import java.io.IOException;
-import java.util.Properties;
 import prodcons.IProdConsBuffer;
 import prodcons.Message;
-import prodcons.TestProdCons;
+
 
 public class ProdConsBuffer implements IProdConsBuffer{
 
@@ -37,7 +35,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public void put(prodcons.Message m) throws InterruptedException {
+    public synchronized void put(prodcons.Message m) throws InterruptedException {
        while(nfull == Bufs){
         wait();
        }
@@ -50,7 +48,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public prodcons.Message get() throws InterruptedException {
+    public synchronized  prodcons.Message get() throws InterruptedException {
         while(nempty == Bufs){
             wait();
             if (NoMoreProducers() && nmsg() <= 0) {
@@ -69,7 +67,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
         activeProducers += nbProducers;
     }
 
-    public void UnregisterProducer() {
+    public synchronized void UnregisterProducer() {
         activeProducers--;
         if (activeProducers == 0) {
             notifyAll();
