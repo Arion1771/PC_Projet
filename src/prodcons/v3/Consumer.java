@@ -15,7 +15,8 @@ public class Consumer extends Thread {
     public void run() {
         while (true) {
             if (buff.NoMoreProducers() && buff.nmsg() <= 0) {
-                break;
+                System.out.println("Thread " + this.getId() + " exiting: no more producers and no more messages\n");
+                return;
             }
             msg = this.buff.get();
             try {

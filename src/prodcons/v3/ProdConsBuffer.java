@@ -1,10 +1,8 @@
 package prodcons.v3;
 
-import prodcons.Message;
-
 import java.util.concurrent.Semaphore;
-
 import prodcons.IProdConsBuffer;
+import prodcons.Message;
 
 public class ProdConsBuffer implements IProdConsBuffer{
     int size;
@@ -13,7 +11,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private Message[] buffer;
     private int np;
     private int nc;
-    Message message = new Message("", 0);
+    int count=0;
     Semaphore empty;
     Semaphore full;
     Semaphore mutex = new Semaphore(1);
@@ -22,6 +20,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
         this.size = bufSz;
         this.empty = new Semaphore(bufSz);
         this.full = new Semaphore(0);
+        this.buffer = new Message[bufSz];
+        this.np = 0;
+        this.nc = 0;
     }
 
     @Override
@@ -32,6 +33,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
             this.buffer[np] = m;
             np = (np + 1) % size;
             NbMsg++;
+            count++;
             mutex.release();
             full.release();
         } catch (InterruptedException e) {
@@ -41,43 +43,67 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
     @Override
     public Message get() {
+        Message message = null;
         try {
             full.acquire();
             mutex.acquire();
-            this.message = this.buffer[nc];
+            message = this.buffer[nc];
+            count--;
             nc = (nc + 1) % size;
             mutex.release();
             empty.release();
         } catch (InterruptedException e) {
             System.out.println("Thread " + Thread.currentThread().getId() + " was interrupted\n");
         }
-        return this.message;
+        return message;
     }
 
-    @Override
-    public int nmsg() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'nmsg'");
+ @Override
+public int nmsg() {
+    try {
+        mutex.acquire();
+        return count;
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return count;
+    } finally {
+        mutex.release();
     }
+}
+
 
     @Override
     public int totmsg() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'totmsg'");
+        return NbMsg;
     }
 
     public void RegisterProducer(int nbProducers) {
+
         this.NbProducers = nbProducers;
     }
 
     public void UnregisterProducer() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'UnregisterProducer'");
+        try {
+            mutex.acquire();
+            this.NbProducers--;
+           
+        } catch (InterruptedException ex) {
+        }
+        finally {mutex.release();}
     }
 
     public boolean NoMoreProducers() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'NoMoreProducers'");
+        try {
+            mutex.acquire();
+        
+         
+        return this.NbProducers == 0;
+    }
+         catch (InterruptedException ex) {
+            return false;
+        }
+        
+        finally {mutex.release();}     
     }
 
 }
