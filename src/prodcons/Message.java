@@ -7,7 +7,11 @@ public class Message {
         this.content = content;
         this.ID = ID;
         }
+    
         
+    public int getID() {
+        return ID;
+    }
 
     public String getContent() {
         return content;

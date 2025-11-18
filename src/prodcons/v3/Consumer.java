@@ -14,11 +14,13 @@ public class Consumer extends Thread {
     @Override
     public void run() {
         while (true) {
-            if (buff.NoMoreProducers() && buff.nmsg() <= 0) {
+            msg = this.buff.get();
+            if (msg.getID()==-1) {
                 System.out.println("Thread " + this.getId() + " exiting: no more producers and no more messages\n");
+        
                 return;
             }
-            msg = this.buff.get();
+            
             try {
                 sleep(consTime);
             } catch (InterruptedException e) {
