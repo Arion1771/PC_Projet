@@ -29,6 +29,6 @@ public class Producer extends Thread {
             System.out.println("Thread "+this.getId()+" sent message: "+mess);
             i++;
         }
-        buff.UnregisterProducer();
+        
     }
 }

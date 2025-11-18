@@ -3,7 +3,6 @@ package prodcons.v4;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Random;
-
 import prodcons.Message;
 
 public class TestProdCons {
@@ -29,19 +28,47 @@ public class TestProdCons {
         int maxProd = Integer.parseInt(properties.getProperty("maxProd"));
 
         ProdConsBuffer buffer = new ProdConsBuffer(bufSz);
-        buffer.RegisterProducer(nProd);
+        
 
-        while (nCons >0) {
-            Consumer c = new Consumer(buffer,consTime);
-            c.start();
-            nCons--;
-        }
+         Consumer[] consumers = new Consumer[nCons];
+    for (int i = 0; i < nCons; i++) {
+        consumers[i] = new Consumer(buffer, consTime);
+        consumers[i].start();
+    }
 
-        while (nProd >0) {
-            int nMsg = rand.nextInt((maxProd - minProd) + 1) + minProd;
-            Producer p = new Producer(buffer,prodTime,nMsg);
-            p.start();
-            nProd--;
+        Producer[] producers = new Producer[nProd];
+    int totalMsg = 0;
+
+    for (int i = 0; i < nProd; i++) {
+        int nMsg = rand.nextInt((maxProd - minProd) + 1) + minProd;
+        totalMsg += nMsg;
+        producers[i] = new Producer(buffer, prodTime, nMsg);
+        producers[i].start();
+    }
+
+    for (int i = 0; i < nProd; i++) {
+        try {
+            producers[i].join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
+
+
+
+    for (int i = 0; i < nCons; i++) {
+        buffer.put(new Message("END", -1));
+    }
+    
+    for (int i = 0; i < nCons; i++) {
+        try {
+            consumers[i].join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+        
+        assert (totalMsg==buffer.totmsg());
+    }
 }
+

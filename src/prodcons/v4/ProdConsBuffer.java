@@ -1,7 +1,7 @@
 package prodcons.v4;
 
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import prodcons.IProdConsBuffer;
 import prodcons.Message;
 
@@ -42,6 +42,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
          } catch (InterruptedException e) {
           System.out.println("Thread " + Thread.currentThread().getId() + " was interrupted\n");
          } finally {
+
           lock.unlock();
           return;
          }
@@ -50,13 +51,35 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
     @Override
     public Message get() {
-       
+        lock.lock();
+        try {
+            // tant que le buffer est vide, on attend
+            while (count == 0) {
+                try {
+                    notEmpty.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return null; 
+                }
+            }
+
+            Message m = buffer[nc];
+            nc = (nc + 1) % size;
+            count--;
+
+            
+            notFull.signal();
+
+            return m;
+        } finally {
+            lock.unlock();
+        }
         
     }
 
  @Override
 public int nmsg() {
-    
+    return count;
 }
 
 
@@ -65,18 +88,6 @@ public int nmsg() {
         return NbMsg;
     }
 
-    public void RegisterProducer(int nbProducers) {
-
-        this.NbProducers = nbProducers;
-    }
-
-    public void UnregisterProducer() {
-        
-    }
-
-    public boolean NoMoreProducers() {
-        
-            
-    }
+    
 
 }
