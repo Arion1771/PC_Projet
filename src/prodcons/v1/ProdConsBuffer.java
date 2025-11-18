@@ -1,10 +1,8 @@
 package prodcons.v1;
 
-import java.io.IOException;
-import java.util.Properties;
 import prodcons.IProdConsBuffer;
 import prodcons.Message;
-import prodcons.TestProdCons;
+
 
 public class ProdConsBuffer implements IProdConsBuffer{
 
