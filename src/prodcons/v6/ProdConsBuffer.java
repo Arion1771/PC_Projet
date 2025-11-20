@@ -13,7 +13,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private int nmsg;
     private int nempty;
     private int nfull;
-    private int activeProducers = 0;
 
     public ProdConsBuffer(int bufs) {
         Bufs = bufs;
@@ -35,7 +34,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized void put(prodcons.Message m) throws InterruptedException {
+    public synchronized void put(Message m) throws InterruptedException {
        while(nfull == Bufs){
         wait();
        }
@@ -45,6 +44,24 @@ public class ProdConsBuffer implements IProdConsBuffer{
          nempty--;
          nfull++;
          notifyAll();
+    }
+
+    public synchronized void put(int n, Message m) {
+        while(nempty < n){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+        }
+        }
+        for (int i = 0; i < n; i++) {
+            buffer[np%Bufs] = m;
+            np++;
+            nmsg++;
+            nempty--;
+            nfull++;
+        }
+        notifyAll();
     }
 
     @Override

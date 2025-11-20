@@ -77,21 +77,6 @@ public int nmsg() {
         return NbMsg;
     }
 
-    public void RegisterProducer(int nbProducers) {
-
-        this.NbProducers = nbProducers;
-    }
-
-    public void UnregisterProducer() {
-        try {
-            mutex.acquire();
-            this.NbProducers--;
-           
-        } catch (InterruptedException ex) {
-        }
-        finally {mutex.release();}
-    }
-
     public boolean NoMoreProducers() {
         try {
             mutex.acquire();

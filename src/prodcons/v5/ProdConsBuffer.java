@@ -13,7 +13,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private int nmsg;
     private int nempty;
     private int nfull;
-    private int activeProducers = 0;
 
     public ProdConsBuffer(int bufs) {
         Bufs = bufs;

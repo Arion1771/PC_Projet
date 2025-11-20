@@ -42,7 +42,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
          } catch (InterruptedException e) {
           System.out.println("Thread " + Thread.currentThread().getId() + " was interrupted\n");
          } finally {
-
           lock.unlock();
           return;
          }
@@ -77,10 +76,10 @@ public class ProdConsBuffer implements IProdConsBuffer{
         
     }
 
- @Override
-public int nmsg() {
-    return count;
-}
+    @Override
+    public int nmsg() {
+        return count;
+    }
 
 
     @Override

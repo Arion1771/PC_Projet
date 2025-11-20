@@ -28,7 +28,6 @@ public class TestProdCons {
         int maxProd = Integer.parseInt(properties.getProperty("maxProd"));
 
         ProdConsBuffer buffer = new ProdConsBuffer(bufSz);
-        buffer.RegisterProducer(nProd);
 
         Consumer[] consumers = new Consumer[nCons];
     for (int i = 0; i < nCons; i++) {
