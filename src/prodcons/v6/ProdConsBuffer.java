@@ -13,6 +13,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private int nmsg;
     private int nempty;
     private int nfull;
+    
 
     public ProdConsBuffer(int bufs) {
         Bufs = bufs;
@@ -93,5 +94,11 @@ public class ProdConsBuffer implements IProdConsBuffer{
         }
         notifyAll();
         return m;
+    }
+
+    @Override
+    public void put(Message m, int n) throws InterruptedException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'put'");
     }
 }
