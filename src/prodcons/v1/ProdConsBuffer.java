@@ -59,4 +59,10 @@ public class ProdConsBuffer implements IProdConsBuffer{
         notifyAll();
         return m;
     }
+
+    @Override
+    public Message[] get(int k) throws InterruptedException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    }
 }

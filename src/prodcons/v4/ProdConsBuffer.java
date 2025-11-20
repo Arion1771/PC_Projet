@@ -88,6 +88,12 @@ public int nmsg() {
         return NbMsg;
     }
 
+    @Override
+    public Message[] get(int k) throws InterruptedException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    }
+
     
 
 }

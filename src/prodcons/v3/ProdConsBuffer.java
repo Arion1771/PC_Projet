@@ -106,4 +106,10 @@ public int nmsg() {
         finally {mutex.release();}     
     }
 
+    @Override
+    public Message[] get(int k) throws InterruptedException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    }
+
 }

@@ -1,4 +1,4 @@
-package prodcons.v2;
+package prodcons.v5;
 
 import prodcons.IProdConsBuffer;
 import prodcons.Message;
@@ -51,9 +51,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
     public synchronized  prodcons.Message get() throws InterruptedException {
         while(nempty == Bufs){
             wait();
-            if (NoMoreProducers() && nmsg() <= 0) {
-                break;
-            }
         }
         Message m = buffer[nc%Bufs];
         nc++;
@@ -63,24 +60,21 @@ public class ProdConsBuffer implements IProdConsBuffer{
         return m;
     }
 
-    public void RegisterProducer( int nbProducers ) {
-        activeProducers += nbProducers;
-    }
-
-    public synchronized void UnregisterProducer() {
-        activeProducers--;
-        if (activeProducers == 0) {
-            notifyAll();
-        }
-    }
-
-    public synchronized boolean NoMoreProducers() {
-        return activeProducers <= 0;
-    }
-
     @Override
-    public Message[] get(int k) throws InterruptedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    public synchronized Message[] get(int k) throws InterruptedException {
+        int i = 0;
+        Message [] m = new Message[k] ;
+        while (i < k) {
+            while(nempty == Bufs){
+                    wait();
+            }
+            m[i] = buffer[nc%Bufs];
+            nc++;
+            nempty++;
+            nfull--;
+            i++;
+        }
+        notifyAll();
+        return m;
     }
 }
