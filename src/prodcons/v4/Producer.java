@@ -1,6 +1,5 @@
 package prodcons.v4;
 
-import prodcons.Message;
 
 public class Producer extends Thread {
     Message mess;

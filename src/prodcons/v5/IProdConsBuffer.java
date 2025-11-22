@@ -1,7 +1,5 @@
 package prodcons.v5;
 
-import prodcons.Message;
-
 public interface IProdConsBuffer {
     /**
     * Put the message m in the buffer
@@ -12,7 +10,8 @@ public interface IProdConsBuffer {
     /**
     * Retrieve n consecutive messages from the prodcons buffer following a fifo order
     **/
-    public Message[] get(int k) throws InterruptedException;
+    Message[] get(int k) throws InterruptedException;
+    
 
     /**
     * Retrieve a message from the buffer,
@@ -34,5 +33,6 @@ public interface IProdConsBuffer {
     * been put in the buffer since its creation
     **/
     public int totmsg();
+
 
 }

@@ -1,6 +1,5 @@
 package prodcons.v5;
 import java.util.Random;
-import prodcons.Message;
 public class Consumer extends Thread {
     
     ProdConsBuffer buff;

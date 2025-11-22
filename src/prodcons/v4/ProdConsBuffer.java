@@ -2,7 +2,6 @@ package prodcons.v4;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import prodcons.Message;
 
 public class ProdConsBuffer implements IProdConsBuffer{
     ReentrantLock lock = new ReentrantLock();

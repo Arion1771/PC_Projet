@@ -1,7 +1,5 @@
 package prodcons.v1;
 
-import prodcons.Message;
-
 public interface IProdConsBuffer {
     /**
     * Put the message m in the buffer

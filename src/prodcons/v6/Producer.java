@@ -2,8 +2,6 @@ package prodcons.v6;
 
 import java.util.Random;
 
-import prodcons.Message;
-
 public class Producer extends Thread {
     Message mess;
     ProdConsBuffer buff;
@@ -22,7 +20,11 @@ public class Producer extends Thread {
         int i=0;
         while (i<nbMess) {
             this.mess=new Message("Message from Thread "+this.getId(), i);
-            this.buff.put(nbMess,mess);
+            try {
+                this.buff.put(nbMess,mess);
+            } catch (InterruptedException e) {
+                System.out.println("Thread "+this.getId()+" was interrupted while puting\n");
+            }
             try {
                 sleep(prodTime);
             } catch (InterruptedException e) {

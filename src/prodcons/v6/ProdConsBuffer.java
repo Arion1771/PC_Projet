@@ -1,9 +1,5 @@
 package prodcons.v6;
 
-import prodcons.IProdConsBuffer;
-import prodcons.Message;
-
-
 public class ProdConsBuffer implements IProdConsBuffer{
 
     private int Bufs;
@@ -47,7 +43,8 @@ public class ProdConsBuffer implements IProdConsBuffer{
          notifyAll();
     }
 
-    public synchronized void put(int n, Message m) {
+    @Override
+    public synchronized void put(int n, Message m) throws InterruptedException {
         while(nempty < n){
             try {
                 wait();
@@ -66,7 +63,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized  prodcons.Message get() throws InterruptedException {
+    public synchronized  Message get() throws InterruptedException {
         while(nempty == Bufs){
             wait();
         }
@@ -96,9 +93,4 @@ public class ProdConsBuffer implements IProdConsBuffer{
         return m;
     }
 
-    @Override
-    public void put(Message m, int n) throws InterruptedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'put'");
-    }
 }

@@ -1,4 +1,4 @@
-package prodcons;
+package prodcons.v6;
 
 public class Message {
     private String content;

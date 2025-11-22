@@ -3,7 +3,6 @@ package prodcons.v5;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Random;
-import prodcons.Message;
 
 public class TestProdCons {
 
@@ -11,10 +10,10 @@ public class TestProdCons {
         Random rand = new Random();
         Properties properties = new Properties();
         System.out.println("Chemin trouvé : " + 
-        TestProdCons.class.getClassLoader().getResource("prodcons/v1/options.xml"));
+        TestProdCons.class.getClassLoader().getResource("prodcons/options.xml"));
         try {
             properties.loadFromXML(
-            TestProdCons.class.getClassLoader().getResourceAsStream("prodcons/v1/options.xml"));
+            TestProdCons.class.getClassLoader().getResourceAsStream("prodcons/options.xml"));
         } catch (IOException e) {
             System.err.println("Error loading options.xml");
             e.printStackTrace();

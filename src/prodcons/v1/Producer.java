@@ -1,7 +1,5 @@
 package prodcons.v1;
 
-import prodcons.Message;
-
 public class Producer extends Thread {
     Message mess;
     ProdConsBuffer buff;

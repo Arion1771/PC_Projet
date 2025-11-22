@@ -1,9 +1,5 @@
 package prodcons.v2;
 
-import prodcons.IProdConsBuffer;
-import prodcons.Message;
-
-
 public class ProdConsBuffer implements IProdConsBuffer{
 
     private int Bufs;
@@ -35,7 +31,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized void put(prodcons.Message m) throws InterruptedException {
+    public synchronized void put(Message m) throws InterruptedException {
        while(nfull == Bufs){
         wait();
        }
@@ -48,7 +44,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized  prodcons.Message get() throws InterruptedException {
+    public synchronized  Message get() throws InterruptedException {
         while(nempty == Bufs){
             wait();
             if (NoMoreProducers() && nmsg() <= 0) {
@@ -76,11 +72,5 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
     public synchronized boolean NoMoreProducers() {
         return activeProducers <= 0;
-    }
-
-    @Override
-    public Message[] get(int k) throws InterruptedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
     }
 }

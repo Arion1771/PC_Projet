@@ -1,8 +1,6 @@
 package prodcons.v3;
 
 import java.util.concurrent.Semaphore;
-import prodcons.IProdConsBuffer;
-import prodcons.Message;
 
 public class ProdConsBuffer implements IProdConsBuffer{
     int size;
@@ -89,12 +87,6 @@ public int nmsg() {
         }
         
         finally {mutex.release();}     
-    }
-
-    @Override
-    public Message[] get(int k) throws InterruptedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
     }
 
 }

@@ -1,9 +1,5 @@
 package prodcons.v5;
 
-
-import prodcons.Message;
-
-
 public class ProdConsBuffer implements IProdConsBuffer{
 
     private int Bufs;
@@ -34,7 +30,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized void put(prodcons.Message m) throws InterruptedException {
+    public synchronized void put(Message m) throws InterruptedException {
        while(nfull == Bufs){
         wait();
        }
@@ -49,7 +45,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized  prodcons.Message get() throws InterruptedException {
+    public synchronized  Message get() throws InterruptedException {
         while(nempty == Bufs){
             wait();
         }
@@ -62,26 +58,22 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-  
-public synchronized Message[] get(int k) throws InterruptedException {
-       while (nfull == 0) {
-        wait();
-    }
+    public synchronized Message[] get(int k) throws InterruptedException {
+        while (nfull == 0) {
+            wait();
+        }
+        int toRead = Math.min(k, nfull);
+        Message[] res = new Message[toRead];
 
-    int toRead = Math.min(k, nfull);
-    Message[] res = new Message[toRead];
-
-    for (int i = 0; i < toRead; i++) {
-        // ici on sait qu'il reste au moins 1 message
-        res[i] = buffer[nc % Bufs];
-        nc++;
-        nempty++;
+        for (int i = 0; i < toRead; i++) {
+            // ici on sait qu'il reste au moins 1 message
+            res[i] = buffer[nc % Bufs];
+            nc++;
+            nempty++;
         nfull--;
-    }
-
-    notifyAll();
-    return res;
-
+        }
+        notifyAll();
+        return res;
     }
 }
 
