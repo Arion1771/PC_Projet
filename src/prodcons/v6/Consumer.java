@@ -1,5 +1,4 @@
 package prodcons.v6;
-import java.util.Random;
 
 public class Consumer extends Thread {
     
@@ -18,7 +17,7 @@ public class Consumer extends Thread {
     public void run() {
         while (true) {
             try {
-                this.buff.get();
+                msg=this.buff.get();
             } catch (InterruptedException e) {
                 System.out.println("Thread " + this.getId() + " was interrupted while getting message\n");
             }
@@ -29,17 +28,7 @@ public class Consumer extends Thread {
                     System.out.println("Thread " + this.getId() + " received message: " + msg);
             }
             
-            if (this.id_prev != msg.getID()) {
-                this.id_prev = msg.getID();
-            } else {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    System.out.println("Thread " + this.getId() + " was interrupted while waiting\n");
-                }
-            }
-
-            try {
+                try {       
                 sleep(consTime);
             } catch (InterruptedException e) {
                 System.out.println("Thread " + this.getId() + " was interrupted while sleeping\n");
@@ -48,3 +37,4 @@ public class Consumer extends Thread {
         }
     }
 }
+
