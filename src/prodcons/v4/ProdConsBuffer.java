@@ -2,7 +2,6 @@ package prodcons.v4;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import prodcons.IProdConsBuffer;
 import prodcons.Message;
 
 public class ProdConsBuffer implements IProdConsBuffer{
@@ -87,11 +86,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
         return NbMsg;
     }
 
-    @Override
-    public Message[] get(int k) throws InterruptedException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'get'");
-    }
+   
 
     
 

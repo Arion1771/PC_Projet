@@ -1,6 +1,6 @@
 package prodcons.v5;
 
-import prodcons.IProdConsBuffer;
+
 import prodcons.Message;
 
 
@@ -40,7 +40,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
        }
          buffer[np%Bufs] = m;
          np++;
-         nmsg++;
+         if (m.getID() != -1) {   // ne compte que les vrais messages
+        nmsg++;
+    }
          nempty--;
          nfull++;
          notifyAll();
@@ -60,20 +62,30 @@ public class ProdConsBuffer implements IProdConsBuffer{
     }
 
     @Override
-    public synchronized Message[] get(int k) throws InterruptedException {
-        int i = 0;
-        Message [] m = new Message[k] ;
-        while (i < k) {
-            while(nempty == Bufs){
-                    wait();
-            }
-            m[i] = buffer[nc%Bufs];
-            nc++;
-            nempty++;
-            nfull--;
-            i++;
-        }
-        notifyAll();
-        return m;
+  
+public synchronized Message[] get(int k) throws InterruptedException {
+       while (nfull == 0) {
+        wait();
+    }
+
+    int toRead = Math.min(k, nfull);
+    Message[] res = new Message[toRead];
+
+    for (int i = 0; i < toRead; i++) {
+        // ici on sait qu'il reste au moins 1 message
+        res[i] = buffer[nc % Bufs];
+        nc++;
+        nempty++;
+        nfull--;
+    }
+
+    notifyAll();
+    return res;
+
     }
 }
+
+
+
+   
+
