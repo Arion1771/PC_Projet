@@ -22,7 +22,6 @@ public class Consumer extends Thread {
             } catch (InterruptedException e) {
                 System.out.println("Thread " + this.getId() + " was interrupted while getting message\n");
             }
-
             if (msg.getID()==-1) {
                 System.out.println("Thread " + this.getId() + " exiting: no more producers and no more messages\n");
                 return;
