@@ -25,7 +25,7 @@ public class Consumer extends Thread {
                 System.out.println("Thread " + this.getId() + " exiting: no more producers and no more messages\n");
                 return;
             } else {
-                    System.out.println("Thread " + this.getId() + " received message: " + msg);
+                    
             }
             
                 try {       
