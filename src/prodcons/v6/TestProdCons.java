@@ -142,16 +142,9 @@ private static synchronized void printMsgOrders() {
             System.out.println("=== Résumé ===");
             System.out.println("Total messages demandés aux producteurs : " + totalMsg);
             System.out.println("Total messages comptés par le buffer   : " + totMsgBuffer);
-            boolean fifoMessages = isFifoMessages();
-            System.out.println("FIFO messages = " + fifoMessages);
             System.out.println(totalMsg == totMsgBuffer ? "✅ OK" : "❌ ERREUR");
-            
-
-            
         }
     }
-
-    
 }
 
 

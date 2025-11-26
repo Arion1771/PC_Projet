@@ -26,7 +26,7 @@ public class Consumer extends Thread {
             } catch (InterruptedException e) {
                 System.out.println("Thread " + this.getId() + " was interrupted while sleeping\n");
             }
-            System.out.println("Thread " + this.getId() + " received message: " + msg);
         }
+        System.out.println("Consumer Thread " + this.getId() + " finished");
     }
 }

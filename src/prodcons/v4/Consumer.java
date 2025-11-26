@@ -15,17 +15,14 @@ public class Consumer extends Thread {
         while (true) {
             msg = this.buff.get();
             if (msg.getID()==-1) {
-                System.out.println("Thread " + this.getId() + " exiting: no more producers and no more messages\n");
-        
+                System.out.println("Thread " + this.getId() + " exiting: no more producers and no more messages");
                 return;
             }
-            
             try {
                 sleep(consTime);
             } catch (InterruptedException e) {
                 System.out.println("Thread " + this.getId() + " was interrupted while sleeping\n");
             }
-            System.out.println("Thread " + this.getId() + " received message: " + msg);
         }
     }
 }

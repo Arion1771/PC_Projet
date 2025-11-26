@@ -24,8 +24,8 @@ public class Producer extends Thread {
             } catch (InterruptedException e) {
                 System.out.println("Thread "+this.getId()+" was interrupted while sleeping\n");
             }
-            System.out.println("Thread "+this.getId()+" sent message: "+mess);
             i++;
         }
+        System.out.println("Producer Thread "+this.getId()+" finished its production with "+nbMess+" messages.");
     }
 }

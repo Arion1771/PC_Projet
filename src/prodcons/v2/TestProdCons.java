@@ -28,11 +28,14 @@ public class TestProdCons {
 
         ProdConsBuffer buffer = new ProdConsBuffer(bufSz);
         buffer.RegisterProducer(nProd);
+        Thread[] threads = new Thread[nProd + nCons];
 
         while (nCons >0) {
             Consumer c = new Consumer(buffer,consTime);
             c.start();
             nCons--;
+            threads[nCons+nProd] = c;
+            System.out.println("Lancement du consommateur "+c.getId());
         }
 
         while (nProd >0) {
@@ -40,6 +43,18 @@ public class TestProdCons {
             Producer p = new Producer(buffer,prodTime,nMsg);
             p.start();
             nProd--;
+            threads[nProd] = p;
+            System.out.println("Lancement du producteur "+p.getId()+" avec "+nMsg+" messages à produire.");
         }
+
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        System.out.println("Message restant a consommer dans le buffer: " + buffer.nmsg());
+        System.out.println("Tous les producteurs et consommateurs ont terminé.");
     }
 }

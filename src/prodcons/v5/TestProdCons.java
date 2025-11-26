@@ -36,42 +36,43 @@ public class TestProdCons {
     }
 
         Producer[] producers = new Producer[nProd];
-    int totalMsg = 0;
+        int totalMsg = 0;
 
-    for (int i = 0; i < nProd; i++) {
-        int nMsg = rand.nextInt((maxProd - minProd) + 1) + minProd;
-        totalMsg += nMsg;
-        producers[i] = new Producer(buffer, prodTime, nMsg);
-        producers[i].start();
-    }
-
-    for (int i = 0; i < nProd; i++) {
-        try {
-            producers[i].join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        for (int i = 0; i < nProd; i++) {
+            int nMsg = rand.nextInt((maxProd - minProd) + 1) + minProd;
+            totalMsg += nMsg;
+            producers[i] = new Producer(buffer, prodTime, nMsg);
+            producers[i].start();
         }
-    }
 
-
-
-    for (int i = 0; i < nCons; i++) {
-        try {
-            buffer.put(new Message("END", -1));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (int i = 0; i < nProd; i++) {
+            try {
+                producers[i].join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-    }
+
+
+
+        for (int i = 0; i < nCons; i++) {
+            try {
+                buffer.put(new Message("END", -1));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     
-    for (int i = 0; i < nCons; i++) {
-        try {
-            consumers[i].join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-        
+        for (int i = 0; i < nCons; i++) {
+            try {
+                consumers[i].join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }  
         assert (totalMsg==buffer.totmsg());
+        System.out.println("Message restant a consommer dans le buffer: " + buffer.nmsg());
+        System.out.println("Tous les producteurs et consommateurs ont terminé.");
     }
 }
 

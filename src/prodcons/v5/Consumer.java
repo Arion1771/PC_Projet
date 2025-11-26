@@ -32,17 +32,14 @@ public class Consumer extends Thread {
                     System.out.println("Thread " + this.getId()+ " exiting: no more producers and no more messages\n");
                     return;
                 } else {
-                    System.out.println("Thread " + this.getId() + " received message: " + msg);
                 }
                  try {
-                sleep(consTime);
-            } catch (InterruptedException e) {
-                System.out.println("Thread " + this.getId() + " was interrupted while sleeping\n");
-            }
-                System.out.println("Thread " + this.getId() + " received message: " + msg);
-        }
+                    sleep(consTime);
+                } catch (InterruptedException e) {
+                    System.out.println("Thread " + this.getId() + " was interrupted while sleeping\n");
                 }
-                
-        }
+            }
+        }        
     }
+}
 
