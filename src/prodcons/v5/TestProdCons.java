@@ -27,24 +27,25 @@ public class TestProdCons {
         int maxProd = Integer.parseInt(properties.getProperty("maxProd"));
 
         ProdConsBuffer buffer = new ProdConsBuffer(bufSz);
-        
+        Consumer[] consumers = new Consumer[nCons];
 
-         Consumer[] consumers = new Consumer[nCons];
-    for (int i = 0; i < nCons; i++) {
-        consumers[i] = new Consumer(buffer, consTime);
-        consumers[i].start();
-    }
+        // Lancer les consommateurs
+        for (int i = 0; i < nCons; i++) {
+            consumers[i] = new Consumer(buffer, consTime);
+            consumers[i].start();
+        }
 
+        // Lancer les producteurs
         Producer[] producers = new Producer[nProd];
         int totalMsg = 0;
-
+        
         for (int i = 0; i < nProd; i++) {
             int nMsg = rand.nextInt((maxProd - minProd) + 1) + minProd;
             totalMsg += nMsg;
             producers[i] = new Producer(buffer, prodTime, nMsg);
             producers[i].start();
         }
-
+                // Attendre la fin de tous les producteurs
         for (int i = 0; i < nProd; i++) {
             try {
                 producers[i].join();
@@ -53,26 +54,34 @@ public class TestProdCons {
             }
         }
 
-
-
+        // Envoyer les messages de fin pour les consommateurs
         for (int i = 0; i < nCons; i++) {
             try {
                 buffer.put(new Message("END", -1));
+                totalMsg++; // chaque message END compte comme un message produit
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-    
+
+        // Attendre la fin de tous les consommateurs
         for (int i = 0; i < nCons; i++) {
             try {
                 consumers[i].join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        }  
-        
-        System.out.println("Message restant a consommer dans le buffer: " + buffer.nmsg());
-        System.out.println("Tous les producteurs et consommateurs ont terminé.");
+        }
+
+        // Résumé principal
+        synchronized (System.out) {
+            int totMsgBuffer = buffer.totmsg();
+            System.out.println("=== Résumé ===");
+            System.out.println("Total messages demandés aux producteurs : " + totalMsg);
+            System.out.println("Total messages comptés par le buffer   : " + totMsgBuffer);
+            System.out.println(totalMsg == totMsgBuffer ? "✅ OK" : "❌ ERREUR");
+        }
     }
 }
 

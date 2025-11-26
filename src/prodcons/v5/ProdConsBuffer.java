@@ -9,6 +9,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
     private int nmsg;
     private int nempty;
     private int nfull;
+    private int consumedMsg;
 
     public ProdConsBuffer(int bufs) {
         Bufs = bufs;
@@ -31,17 +32,17 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
     @Override
     public synchronized void put(Message m) throws InterruptedException {
-       while(nfull == Bufs){
-        wait();
-       }
-         buffer[np%Bufs] = m;
-         np++;
-         if (m.getID() != -1) {   // ne compte que les vrais messages
-        nmsg++;
-    }
-         nempty--;
-         nfull++;
-         notifyAll();
+        while(nfull == Bufs){
+            wait();
+        }
+        buffer[np%Bufs] = m;
+        np++;
+        if (m.getID() != -1) {   // ne compte que les vrais messages
+           nmsg++;
+        }
+        nempty--;
+        nfull++;
+        notifyAll();
     }
 
     @Override
@@ -50,7 +51,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
             wait();
         }
         Message m = buffer[nc%Bufs];
-         
         nc++;
         nempty++;
         nfull--;
@@ -65,20 +65,19 @@ public class ProdConsBuffer implements IProdConsBuffer{
         }
         int toRead = Math.min(k, nfull);
         Message[] res = new Message[toRead];
-
-        for (int i = 0; i < toRead; i++) {
-            
+        int i;
+        for (i = 0 ; i < toRead; i++) {
             // ici on sait qu'il reste au moins 1 message
             res[i] = buffer[nc % Bufs];
             nc++;
             nempty++;
             nfull--;
             if (res[i].getID() == -1) {
-            break;
-        }
-            
+                break;
+            }
         }
         notifyAll();
+        consumedMsg += i;
         return res;
     }
 }

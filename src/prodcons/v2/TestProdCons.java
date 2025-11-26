@@ -28,32 +28,47 @@ public class TestProdCons {
 
         ProdConsBuffer buffer = new ProdConsBuffer(bufSz);
         buffer.RegisterProducer(nProd);
-        Thread[] threads = new Thread[nProd + nCons];
 
-        while (nCons >0) {
-            Consumer c = new Consumer(buffer,consTime);
-            c.start();
-            nCons--;
-            threads[nCons+nProd] = c;
-            System.out.println("Lancement du consommateur "+c.getId());
+        Consumer[] consumers = new Consumer[nCons];
+        for (int i = 0; i < nCons; i++) {
+            consumers[i] = new Consumer(buffer, consTime);
+            consumers[i].start();
         }
 
-        while (nProd >0) {
+        Producer[] producers = new Producer[nProd];
+        int totalMsg = 0;
+
+        for (int i = 0; i < nProd; i++) {
             int nMsg = rand.nextInt((maxProd - minProd) + 1) + minProd;
-            Producer p = new Producer(buffer,prodTime,nMsg);
-            p.start();
-            nProd--;
-            threads[nProd] = p;
-            System.out.println("Lancement du producteur "+p.getId()+" avec "+nMsg+" messages à produire.");
+            totalMsg += nMsg;
+            producers[i] = new Producer(buffer, prodTime, nMsg);
+            producers[i].start();
         }
 
-        for (Thread t : threads) {
+        for (int i = 0; i < nProd; i++) {
             try {
-                t.join();
+                producers[i].join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
+
+        for (int i = 0; i < nCons; i++) {
+            try {
+                buffer.put(new Message("END", -1));
+            } catch (InterruptedException e) {
+                System.out.println("Main thread interrupted while sending END message to consumers");
+            }
+        }
+    
+        for (int i = 0; i < nCons; i++) {
+            try {
+                consumers[i].join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        assert (totalMsg==buffer.totmsg());
         System.out.println("Message restant a consommer dans le buffer: " + buffer.nmsg());
         System.out.println("Tous les producteurs et consommateurs ont terminé.");
     }
