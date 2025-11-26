@@ -179,7 +179,7 @@
                     for (int j = 0; j < possible_sur_cette_cellule; j++) {
                         msgs[i] = c.consumeOne();
                         i++;
-                        nmsg-=n;
+                        nmsg-=k;
                     }
 
                     // Si la cellule est entièrement consommée, on la libère
