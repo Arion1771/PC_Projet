@@ -19,6 +19,7 @@ public class Producer extends Thread {
         while (i<nbMess) {
             this.mess=new Message("Message from Thread "+this.getId(), i);
             try {
+                 
                 this.buff.put(nbMess,mess);
             } catch (InterruptedException e) {
                 System.out.println("Thread "+this.getId()+" was interrupted while puting\n");

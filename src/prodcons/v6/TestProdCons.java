@@ -10,40 +10,48 @@ import java.util.concurrent.CountDownLatch;
 
 
 public class TestProdCons {
+    
 
-    // --------- Moniteur FIFO pour les threads producteurs ---------
-    private static final List<String> requestOrder = new ArrayList<>();
-    private static final List<String> enterOrder   = new ArrayList<>();
+    // --------- Moniteur FIFO pour les messages ---------
+private static final List<Integer> producedOrder = new ArrayList<>();
+private static final List<Integer> consumedOrder = new ArrayList<>();
 
-    // appelé par les threads AVANT l'appel à put()
-    public static synchronized void onThreadRequest(String threadName) {
-        requestOrder.add(threadName);
+public static synchronized void onMessagesConsumed(Message[] msgs, int k) {
+    for (int i = 0; i < k; i++) {
+        if (msgs[i].getID() == -1) continue; // on ignore END
+        consumedOrder.add(msgs[i].getID());
     }
+}
 
-    // appelé depuis ProdConsBuffer.put(...) au moment d'entrer en section critique
-    public static synchronized void onThreadEnter(String threadName) {
-        enterOrder.add(threadName);
+public static synchronized void onMessagesProduced(Message m, int n) {
+    if (m.getID() == -1) return; 
+    for (int i = 0; i < n; i++) {
+        producedOrder.add(m.getID());
     }
+}
 
-    private static synchronized void resetFifoMonitor() {
-        requestOrder.clear();
-        enterOrder.clear();
-    }
 
-    private static synchronized boolean isFifoThreads() {
-        if (requestOrder.size() != enterOrder.size()) return false;
-        for (int i = 0; i < requestOrder.size(); i++) {
-            if (!requestOrder.get(i).equals(enterOrder.get(i))) {
-                return false;
-            }
+private static synchronized void resetMsgMonitor() {
+    producedOrder.clear();
+    consumedOrder.clear();
+}
+
+private static synchronized boolean isFifoMessages() {
+    if (producedOrder.size() != consumedOrder.size()) return false;
+    for (int i = 0; i < producedOrder.size(); i++) {
+        if (!producedOrder.get(i).equals(consumedOrder.get(i))) {
+            return false;
         }
-        return true;
     }
+    return true;
+}
 
-    private static synchronized void printFifoOrders() {
-        System.out.println("Ordre des demandes  : " + requestOrder);
-        System.out.println("Ordre des entrées   : " + enterOrder);
-    }
+private static synchronized void printMsgOrders() {
+    System.out.println("Ordre production : " + producedOrder);
+    System.out.println("Ordre conso      : " + consumedOrder);
+}
+
+
 
     // ---------------------------------------------------------------
     //                      main : test global
@@ -134,86 +142,16 @@ public class TestProdCons {
             System.out.println("=== Résumé ===");
             System.out.println("Total messages demandés aux producteurs : " + totalMsg);
             System.out.println("Total messages comptés par le buffer   : " + totMsgBuffer);
+            boolean fifoMessages = isFifoMessages();
+            System.out.println("FIFO messages = " + fifoMessages);
             System.out.println(totalMsg == totMsgBuffer ? "✅ OK" : "❌ ERREUR");
-           
+            
 
             
         }
-
-        // ---------- Test supplémentaire : FIFO des threads producteurs ----------
-        testThreadFIFO();
     }
 
-    // ---------------------------------------------------------------
-    //              Test : FIFO des threads producteurs
-    // ---------------------------------------------------------------
-    private static void testThreadFIFO() {
-    System.out.println("\n=== Test FIFO des threads producteurs ===");
-
-    resetFifoMonitor();
-
-    final int N = 5;
-    final ProdConsBuffer buf = new ProdConsBuffer(1); // petit buffer pour forcer la contention
-    final CountDownLatch startGate = new CountDownLatch(1);
-
-    Thread[] threads = new Thread[N];
-
-    // Producteurs
-    for (int i = 0; i < N; i++) {
-        final int id = i;
-        threads[i] = new Thread(() -> {
-            try {
-                startGate.await();
-
-                String name = Thread.currentThread().getName();
-                // on enregistre l'ordre de demande
-                onThreadRequest(name);
-
-                // un seul put par thread
-                buf.put(new Message("T" + id, id));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }, "P" + i);
-        threads[i].start();
-    }
-
-    // Consommateur qui va consommer exactement N messages
-    Thread consumer = new Thread(() -> {
-        try {
-            for (int i = 0; i < N; i++) {
-                buf.get(); // on se fiche du contenu ici, on veut juste débloquer les producteurs
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }, "C");
-    consumer.start();
-
-    // on lance tous les producteurs en même temps
-    startGate.countDown();
-
-    // on attend la fin des producteurs
-    for (Thread t : threads) {
-        try {
-            t.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    // on attend aussi le consommateur
-    try {
-        consumer.join();
-    } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-    }
-
-    // affichage + verdict
-    printFifoOrders();
-    boolean fifo = isFifoThreads();
-    System.out.println("FIFO threads = " + fifo);
-    assert fifo : "Accès non FIFO au buffer pour les threads producteurs";
+    
 }
 
-}
+

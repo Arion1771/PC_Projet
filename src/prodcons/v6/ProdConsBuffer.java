@@ -36,6 +36,7 @@
                                 // on réveille le producteur qui attend la fin de la conso
                                 allconsumed_p.signalAll();
                             }
+                            
                             return message;
                         } finally {
                             lock.unlock();
@@ -66,7 +67,7 @@
                 private int totmsg;
 
                 // 🔑 Lock global équitable + conditions
-                private final ReentrantLock lock = new ReentrantLock(true); // fair = FIFO
+                private final ReentrantLock lock = new ReentrantLock(true); 
                 private final Condition notFull  = lock.newCondition();
                 private final Condition notEmpty = lock.newCondition();
 
@@ -114,10 +115,11 @@
                     // 1) On insère la Cell dans le buffer sous lock global "fair"
                     lock.lock();
                     try {
-                        TestProdCons.onThreadEnter(Thread.currentThread().getName());
+                        
                         while (nfull == Bufs) {
                             notFull.await();
                         }
+                        
 
                         buffer[np] = c;
                         np = (np + 1) % Bufs;
@@ -125,7 +127,7 @@
                         nfull++;
                         nmsg  += n;
                         totmsg += n;
-
+                        TestProdCons.onMessagesProduced(m, n);
                         // on réveille les consommateurs potentiels
                         notEmpty.signalAll();
                     } finally {
@@ -178,8 +180,9 @@
 
                             for (int j = 0; j < possible_sur_cette_cellule; j++) {
                                 msgs[i] = c.consumeOne();
+                                TestProdCons.onMessagesConsumed(msgs, k);
                                 i++;
-                                nmsg-=k;
+                                nmsg--;
                             }
 
                             // Si la cellule est entièrement consommée, on la libère
