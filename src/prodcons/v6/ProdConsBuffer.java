@@ -122,11 +122,15 @@
                         
 
                         buffer[np] = c;
+                        if (buffer[np].message.getID() != -1) {   // ne compte que les vrais messages
+                              totmsg += n;
+                        }   
                         np = (np + 1) % Bufs;
+                        nmsg += n;
 
                         nfull++;
-                        nmsg  += n;
-                        totmsg += n;
+                        
+                        
                         TestProdCons.onMessagesProduced(m, n);
                         // on réveille les consommateurs potentiels
                         notEmpty.signalAll();

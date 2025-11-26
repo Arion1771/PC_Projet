@@ -58,7 +58,7 @@ public class TestProdCons {
         for (int i = 0; i < nCons; i++) {
             try {
                 buffer.put(new Message("END", -1));
-                totalMsg++; // chaque message END compte comme un message produit
+                
 
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -38,10 +38,12 @@ public class ProdConsBuffer implements IProdConsBuffer{
         buffer[np%Bufs] = m;
         np++;
         if (m.getID() != -1) {   // ne compte que les vrais messages
-           nmsg++;
+        nmsg++;
+         
         }
+        
         nempty--;
-        nfull++;
+        nfull++;   
         notifyAll();
     }
 
