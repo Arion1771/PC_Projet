@@ -50,6 +50,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
             wait();
         }
         Message m = buffer[nc%Bufs];
+         
         nc++;
         nempty++;
         nfull--;
@@ -66,11 +67,16 @@ public class ProdConsBuffer implements IProdConsBuffer{
         Message[] res = new Message[toRead];
 
         for (int i = 0; i < toRead; i++) {
+            
             // ici on sait qu'il reste au moins 1 message
             res[i] = buffer[nc % Bufs];
             nc++;
             nempty++;
-        nfull--;
+            nfull--;
+            if (res[i].getID() == -1) {
+            break;
+        }
+            
         }
         notifyAll();
         return res;

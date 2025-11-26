@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 
 
 
@@ -142,6 +141,10 @@ private static synchronized void printMsgOrders() {
             System.out.println("=== Résumé ===");
             System.out.println("Total messages demandés aux producteurs : " + totalMsg);
             System.out.println("Total messages comptés par le buffer   : " + totMsgBuffer);
+            System.out.println(isFifoMessages() ? "✅ Ordre FIFO respecté" : "❌ Ordre FIFO non respecté");
+            if (!isFifoMessages()) {
+                printMsgOrders();
+            }
             System.out.println(totalMsg == totMsgBuffer ? "✅ OK" : "❌ ERREUR");
         }
     }

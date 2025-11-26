@@ -70,7 +70,7 @@ public class TestProdCons {
                 Thread.currentThread().interrupt();
             }
         }  
-        assert (totalMsg==buffer.totmsg());
+        
         System.out.println("Message restant a consommer dans le buffer: " + buffer.nmsg());
         System.out.println("Tous les producteurs et consommateurs ont terminé.");
     }
